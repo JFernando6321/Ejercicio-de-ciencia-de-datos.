@@ -1,0 +1,16 @@
+{
+  "n_modelable": 66038,
+  "prevalencia_k2": 0.26080438535388717,
+  "calibrador": "isotonica",
+  "holdout_auc_pr": 0.834550344549063,
+  "holdout_auc_roc": 0.9404527408160214,
+  "holdout_ks": 0.7374047874111126,
+  "holdout_brier_sin_calibrar": 0.08766645655872617,
+  "holdout_brier_isotonica": 0.08693872066219817,
+  "holdout_brier_platt": 0.09167423197390095,
+  "captura_top10": 0.3511406295119838,
+  "captura_top20": 0.6214265088073925,
+  "captura_top30": 0.8241409182789489,
+  "lift_decil_1": 3.5116723107482564,
+  "auc_roc_sin_variables_saldo": 0.849551715429852
+}

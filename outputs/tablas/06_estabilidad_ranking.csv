@@ -1,0 +1,22 @@
+,fold_1,fold_2,fold_3,fold_4,fold_5,rango_medio,desv_est
+Saldo pendiente / capital concedido,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+Interacción saldo/capital x nº créditos,2.0,2.0,2.0,2.0,2.0,2.0,0.0
+Subproducto,4.0,3.0,3.0,3.0,4.0,3.4,0.5477225575051661
+Tasa vs. promedio de su producto,3.0,4.0,4.0,4.0,3.0,3.6,0.5477225575051661
+Agencia,5.0,5.0,5.0,5.0,5.0,5.0,0.0
+Etapa de deterioro (M1/M2/M3),6.0,6.0,6.0,6.0,6.0,6.0,0.0
+Producto,7.0,7.0,7.0,7.0,7.0,7.0,0.0
+Saldo de capital vigente (Q),8.0,8.0,8.0,8.0,8.0,8.0,0.0
+Número de créditos del cliente,9.0,9.0,10.0,10.0,9.0,9.4,0.5477225575051662
+Tipo de crédito,10.0,11.0,9.0,9.0,10.0,9.8,0.8366600265340756
+Tasa nominal,13.0,10.0,11.0,13.0,11.0,11.6,1.3416407864998738
+Capital por crédito acumulado,12.0,13.0,12.0,11.0,12.0,12.0,0.7071067811865476
+Saldo por crédito acumulado,11.0,12.0,13.0,12.0,13.0,12.2,0.8366600265340756
+Capital concedido (Q),14.0,14.0,15.0,14.0,14.0,14.2,0.4472135954999579
+Región,15.0,15.0,14.0,15.0,15.0,14.8,0.4472135954999579
+Etapa de deterioro (numérica),16.0,16.0,16.0,16.0,16.0,16.0,0.0
+Sexo,17.0,17.0,17.0,17.0,17.0,17.0,0.0
+Saldo vigente (escala logarítmica),18.0,18.0,18.0,18.0,18.0,18.0,0.0
+Capital concedido (escala logarítmica),19.0,19.0,19.0,19.0,19.0,19.0,0.0
+Indicador de crédito recién desembolsado,20.0,20.0,20.0,20.0,20.0,20.0,0.0
+Indicador de saldo cero,21.0,21.0,21.0,21.0,21.0,21.0,0.0

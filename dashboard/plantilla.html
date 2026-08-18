@@ -1,0 +1,880 @@
+<title>Cartera de Riesgo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* ============================ TOKENS ============================ */
+:root{
+  --paper:#F1F5F5; --card:#FFFFFF; --card-2:#F7FAFA;
+  --ink:#0E2229; --ink-2:#3D585F; --ink-3:#6E878D;
+  --line:#DAE4E5; --line-2:#EAF0F0;
+  --accent:#1F4E5F; --accent-soft:#DCE9EC; --accent-ink:#123641;
+  --crimson:#B3261E;
+  --alto:#B3261E; --alto-bg:#F7E2E0;
+  --medio:#A96B08; --medio-bg:#FAEEDA;
+  --bajo:#2C6A50; --bajo-bg:#DFEDE6;
+  --grid:#E4EBEC; --shadow:0 1px 2px rgba(14,34,41,.06),0 6px 20px rgba(14,34,41,.05);
+  --c0:#1F4E5F; --c1:#5F94A3; --c2:#A96B08; --c3:#B3261E; --c4:#6B7F52; --c5:#6A5A86;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0A171C; --card:#122A31; --card-2:#0F242A;
+    --ink:#E3EDEF; --ink-2:#A6BFC4; --ink-3:#77939A;
+    --line:#22424B; --line-2:#1A353D;
+    --accent:#6FB2C4; --accent-soft:#173840; --accent-ink:#9FD0DD;
+    --crimson:#F08076;
+    --alto:#F08076; --alto-bg:#3A1A18;
+    --medio:#E5B45C; --medio-bg:#38290F;
+    --bajo:#7DC7A3; --bajo-bg:#12312492;
+    --grid:#1E3A42; --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.28);
+    --c0:#6FB2C4; --c1:#9CCBD7; --c2:#E5B45C; --c3:#F08076; --c4:#A8BE86; --c5:#B0A0CC;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0A171C; --card:#122A31; --card-2:#0F242A;
+  --ink:#E3EDEF; --ink-2:#A6BFC4; --ink-3:#77939A;
+  --line:#22424B; --line-2:#1A353D;
+  --accent:#6FB2C4; --accent-soft:#173840; --accent-ink:#9FD0DD;
+  --crimson:#F08076;
+  --alto:#F08076; --alto-bg:#3A1A18;
+  --medio:#E5B45C; --medio-bg:#38290F;
+  --bajo:#7DC7A3; --bajo-bg:#123124;
+  --grid:#1E3A42; --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.28);
+  --c0:#6FB2C4; --c1:#9CCBD7; --c2:#E5B45C; --c3:#F08076; --c4:#A8BE86; --c5:#B0A0CC;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:"Zilla Slab",Georgia,serif; margin:0; text-wrap:balance; letter-spacing:-.005em}
+.mono,td.num,th.num{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
+
+/* ============================ SHELL ============================ */
+.shell{display:grid; grid-template-columns:236px minmax(0,1fr); min-height:100vh}
+.rail{
+  background:var(--card); border-right:1px solid var(--line);
+  padding:22px 0 28px; position:sticky; top:0; height:100vh; overflow-y:auto;
+  display:flex; flex-direction:column; gap:22px;
+}
+.brand{padding:0 20px; display:flex; flex-direction:column; gap:3px}
+.brand .mark{
+  font-family:"Zilla Slab",serif; font-weight:700; font-size:19px; line-height:1.15;
+  color:var(--ink); letter-spacing:-.01em;
+}
+.brand .sub{font-size:11.5px; color:var(--ink-3); letter-spacing:.055em; text-transform:uppercase; font-weight:600}
+nav{display:flex; flex-direction:column; gap:2px; padding:0 10px}
+nav .navlabel{
+  padding:0 10px 6px; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--ink-3); font-weight:700;
+}
+nav button{
+  display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px; align-items:baseline;
+  width:100%; text-align:left; padding:9px 10px; border:0; border-radius:7px;
+  background:transparent; color:var(--ink-2); cursor:pointer; font:inherit; font-size:14px;
+  transition:background .15s,color .15s;
+}
+nav button .q{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600;
+  color:var(--ink-3); letter-spacing:.02em;
+}
+nav button:hover{background:var(--card-2); color:var(--ink)}
+nav button[aria-current="true"]{background:var(--accent-soft); color:var(--accent-ink); font-weight:600}
+nav button[aria-current="true"] .q{color:var(--accent-ink)}
+nav button:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+.railfoot{margin-top:auto; padding:0 20px; font-size:11.5px; color:var(--ink-3); line-height:1.45}
+.railfoot .tema{
+  margin-top:12px; display:inline-flex; gap:6px; align-items:center; cursor:pointer;
+  background:var(--card-2); border:1px solid var(--line); border-radius:6px;
+  padding:5px 9px; font:inherit; font-size:12px; color:var(--ink-2);
+}
+.railfoot .tema:hover{color:var(--ink)}
+
+main{padding:26px 30px 60px; max-width:1360px}
+.pagehead{display:flex; flex-wrap:wrap; align-items:flex-end; gap:14px; margin-bottom:20px}
+.pagehead h1{font-size:26px; font-weight:600}
+.pagehead .kicker{
+  font-size:11px; letter-spacing:.09em; text-transform:uppercase; font-weight:700;
+  color:var(--accent); font-family:"Source Sans 3",sans-serif; display:block; margin-bottom:4px;
+}
+.pagehead p{margin:0; color:var(--ink-2); font-size:14px; max-width:62ch}
+
+/* ============================ PRIMITIVES ============================ */
+.card{background:var(--card); border:1px solid var(--line); border-radius:10px; box-shadow:var(--shadow)}
+.card>header{padding:14px 16px 0}
+.card>header h3{font-size:15.5px; font-weight:600}
+.card>header p{margin:3px 0 0; font-size:12.5px; color:var(--ink-3); max-width:64ch}
+.card>.body{padding:12px 16px 16px}
+.grid{display:grid; gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.stack{display:flex; flex-direction:column; gap:14px}
+
+.kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:10px; margin-bottom:18px}
+.kpi{background:var(--card); border:1px solid var(--line); border-radius:9px; padding:12px 13px; position:relative; overflow:hidden}
+.kpi::before{content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--accent)}
+.kpi.risk::before{background:var(--alto)}
+.kpi.ok::before{background:var(--bajo)}
+.kpi .lab{font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-3); font-weight:600; display:block}
+.kpi .val{font-family:"IBM Plex Mono",monospace; font-size:23px; font-weight:600; letter-spacing:-.02em; display:block; margin-top:3px; font-variant-numeric:tabular-nums}
+.kpi .note{font-size:11.5px; color:var(--ink-3); display:block; margin-top:1px}
+
+table{border-collapse:collapse; width:100%; font-size:13px}
+.tablewrap{overflow-x:auto}
+th{
+  text-align:left; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--ink-3); font-weight:700; padding:7px 9px; border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
+td{padding:7px 9px; border-bottom:1px solid var(--line-2); vertical-align:middle}
+th.num,td.num{text-align:right}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--card-2)}
+tfoot td{font-weight:600; border-top:1px solid var(--line); border-bottom:0}
+
+.pill{display:inline-block; padding:2px 8px; border-radius:999px; font-size:11.5px; font-weight:600; white-space:nowrap}
+.pill.alto{background:var(--alto-bg); color:var(--alto)}
+.pill.medio{background:var(--medio-bg); color:var(--medio)}
+.pill.bajo{background:var(--bajo-bg); color:var(--bajo)}
+.pill.n{background:var(--accent-soft); color:var(--accent-ink)}
+
+.bar{height:7px; border-radius:4px; background:var(--line-2); overflow:hidden; min-width:52px}
+.bar>i{display:block; height:100%; background:var(--accent); border-radius:4px}
+
+.nota{
+  border-left:3px solid var(--accent); background:var(--card-2); padding:10px 13px;
+  border-radius:0 7px 7px 0; font-size:13px; color:var(--ink-2);
+}
+.nota strong{color:var(--ink)}
+.alerta{border-left-color:var(--crimson)}
+
+svg{display:block; max-width:100%}
+.axis{fill:var(--ink-3); font-size:10px; font-family:"IBM Plex Mono",monospace}
+.gridline{stroke:var(--grid); stroke-width:1}
+
+.page{display:none}
+.page.on{display:block; animation:fade .25s ease}
+@keyframes fade{from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none}}
+@media (prefers-reduced-motion:reduce){.page.on{animation:none} *{transition:none!important}}
+
+/* simulador */
+.ctrl{display:flex; flex-direction:column; gap:5px; margin-bottom:15px}
+.ctrl label{font-size:12px; font-weight:600; color:var(--ink-2); display:flex; justify-content:space-between; gap:10px}
+.ctrl label b{font-family:"IBM Plex Mono",monospace; color:var(--accent-ink); font-weight:600}
+input[type=range]{width:100%; accent-color:var(--accent); cursor:pointer}
+input[type=range]:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+.segbtns{display:flex; gap:5px; flex-wrap:wrap}
+.segbtns button{
+  border:1px solid var(--line); background:var(--card-2); color:var(--ink-2);
+  border-radius:6px; padding:5px 11px; font:inherit; font-size:12.5px; cursor:pointer;
+}
+.segbtns button[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:#fff}
+:root[data-theme="dark"] .segbtns button[aria-pressed="true"],
+:root:not([data-theme="light"]) .segbtns button[aria-pressed="true"]{color:var(--paper)}
+.out{display:grid; grid-template-columns:repeat(auto-fit,minmax(132px,1fr)); gap:9px}
+.out div{background:var(--card-2); border:1px solid var(--line-2); border-radius:8px; padding:10px 11px}
+.out .lab{font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-3); font-weight:700}
+.out .val{font-family:"IBM Plex Mono",monospace; font-size:18px; font-weight:600; margin-top:2px; font-variant-numeric:tabular-nums}
+
+.legend{display:flex; flex-wrap:wrap; gap:12px; font-size:12px; color:var(--ink-2); margin-top:8px}
+.legend span{display:inline-flex; align-items:center; gap:5px}
+.legend i{width:10px; height:10px; border-radius:3px; display:inline-block}
+
+.clusterhead{display:flex; align-items:baseline; gap:9px; flex-wrap:wrap}
+.clusterhead .dot{width:11px; height:11px; border-radius:3px; flex:0 0 auto; align-self:center}
+.metricrow{display:flex; justify-content:space-between; gap:10px; font-size:12.5px; padding:4px 0; border-bottom:1px solid var(--line-2)}
+.metricrow:last-of-type{border-bottom:0}
+.metricrow span:last-child{font-family:"IBM Plex Mono",monospace; font-weight:600; font-variant-numeric:tabular-nums}
+
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static; height:auto; flex-direction:row; flex-wrap:wrap; align-items:center; padding:14px 16px; gap:12px}
+  .rail nav{flex-direction:row; flex-wrap:wrap; padding:0}
+  .rail nav .navlabel{display:none}
+  .railfoot{margin:0; padding:0; flex-basis:100%}
+  main{padding:18px 16px 50px}
+}
+</style>
+
+<div class="shell">
+<aside class="rail">
+  <div class="brand">
+    <span class="mark">Cartera de Riesgo</span>
+    <span class="sub">Predicción · Segmentación · Canastas</span>
+  </div>
+  <nav id="nav">
+    <span class="navlabel">Tablero</span>
+    <button data-p="fuga"    aria-current="true"><span class="q">1a–1e</span><span>Predicción de fuga</span></button>
+    <button data-p="seg"><span class="q">1f</span><span>Segmentación</span></button>
+    <button data-p="bakery"><span class="q">2a–2c</span><span>Canastas Bakery</span></button>
+    <button data-p="sim"><span class="q">1e</span><span>Simulador de campaña</span></button>
+    <button data-p="metodo"><span class="q">—</span><span>Metodología</span></button>
+  </nav>
+  <div class="railfoot">
+    <div>Base de 10,000 clientes activos.<br>Modelo LightGBM calibrado.</div>
+    <button class="tema" id="tema" type="button">Cambiar tema</button>
+  </div>
+</aside>
+
+<main>
+<!-- ══════════════════════════════ PÁGINA 1 ══════════════════════════════ -->
+<section class="page on" id="p-fuga">
+  <div class="pagehead">
+    <div>
+      <span class="kicker">Incisos 1a – 1e</span>
+      <h1>Predicción de fuga de clientes</h1>
+      <p>Probabilidad calibrada de no renovación para cada uno de los 10,000 clientes activos, con la evidencia de que esa probabilidad es confiable.</p>
+    </div>
+  </div>
+  <div class="kpis" id="kpis-fuga"></div>
+
+  <div class="grid g2" style="margin-bottom:14px">
+    <div class="card">
+      <header><h3>Curva de ganancia acumulada</h3>
+      <p>Qué proporción de las fugas se captura al contactar a los clientes más riesgosos primero.</p></header>
+      <div class="body" id="ch-ganancia"></div>
+    </div>
+    <div class="card">
+      <header><h3>Distribución de la probabilidad de fuga</h3>
+      <p>La cartera se separa en dos poblaciones nítidas, no en una campana centrada.</p></header>
+      <div class="body" id="ch-histo"></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-bottom:14px">
+    <div class="card">
+      <header><h3>Calibración: predicho contra observado</h3>
+      <p>Validación sobre el 20% de datos reservados. Si las dos columnas coinciden, la probabilidad es interpretable como porcentaje real.</p></header>
+      <div class="body tablewrap" id="tb-calib"></div>
+    </div>
+    <div class="card">
+      <header><h3>Variables de mayor impacto <span class="pill n">1c</span></h3>
+      <p>Peso relativo de cada variable en la decisión del modelo, medido con SHAP.</p></header>
+      <div class="body" id="tb-shap"></div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <header><h3>Algoritmos evaluados <span class="pill n">1a</span></h3>
+      <p>Validación cruzada agrupada por vector de atributos. Se reporta la escalera completa, no sólo el ganador.</p></header>
+      <div class="body tablewrap" id="tb-escalera"></div>
+    </div>
+    <div class="card">
+      <header><h3>Deciles de riesgo de la cartera activa <span class="pill n">1d</span></h3>
+      <p>El saldo expuesto no coincide con el riesgo: los clientes más propensos a irse son los de saldo más bajo.</p></header>
+      <div class="body tablewrap" id="tb-deciles"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ PÁGINA 2 ══════════════════════════════ -->
+<section class="page" id="p-seg">
+  <div class="pagehead">
+    <div>
+      <span class="kicker">Inciso 1f</span>
+      <h1>Segmentación de clientes</h1>
+      <p>Seis segmentos obtenidos con k-means sobre un marco RFM adaptado a cartera de crédito, ajustados en el histórico y aplicados a la cartera activa.</p>
+    </div>
+  </div>
+  <div class="kpis" id="kpis-seg"></div>
+
+  <div class="card" style="margin-bottom:14px">
+    <header><h3>Riesgo de fuga por segmento</h3>
+    <p>Barra izquierda: tasa observada en los 78,829 clientes históricos. Barra derecha: probabilidad media que el modelo asigna a los activos del mismo segmento. Que ambas coincidan es la validación cruzada entre los dos ejercicios.</p></header>
+    <div class="body" id="ch-clusters"></div>
+  </div>
+
+  <div class="grid g3" id="fichas" style="margin-bottom:14px"></div>
+
+  <div class="grid g2">
+    <div class="card">
+      <header><h3>Cruce segmento × riesgo</h3>
+      <p>Clientes activos en cada celda. Es la matriz que convierte dos ejercicios separados en una sola priorización comercial.</p></header>
+      <div class="body tablewrap" id="tb-cruce"></div>
+    </div>
+    <div class="card">
+      <header><h3>Riesgo por región</h3>
+      <p>Regiones ordenadas por número esperado de fugas.</p></header>
+      <div class="body tablewrap" id="tb-region"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ PÁGINA 3 ══════════════════════════════ -->
+<section class="page" id="p-bakery">
+  <div class="pagehead">
+    <div>
+      <span class="kicker">Incisos 2a – 2c</span>
+      <h1>Canastas de compra — Bakery</h1>
+      <p>Reglas de asociación sobre 9,981 tickets y 50 productos, depuradas hasta los hallazgos comerciales que son realmente distintos entre sí.</p>
+    </div>
+  </div>
+  <div class="kpis" id="kpis-bakery"></div>
+
+  <div class="nota alerta" style="margin-bottom:14px" id="nota-bakery"></div>
+
+  <div class="grid g2">
+    <div class="card">
+      <header><h3>Canastas seleccionadas <span class="pill n">2a</span></h3>
+      <p>Una fila por hallazgo independiente. El lift indica cuántas veces más probable es la compra conjunta frente a lo que ocurriría por azar.</p></header>
+      <div class="body tablewrap" id="tb-reglas"></div>
+    </div>
+    <div class="stack">
+      <div class="card">
+        <header><h3>Penetración de productos</h3>
+        <p>Porcentaje de tickets que contiene cada producto.</p></header>
+        <div class="body" id="ch-prod"></div>
+      </div>
+      <div class="card">
+        <header><h3>Cómo usar estos resultados <span class="pill n">2c</span></h3></header>
+        <div class="body" id="recos-bakery"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ PÁGINA 4 ══════════════════════════════ -->
+<section class="page" id="p-sim">
+  <div class="pagehead">
+    <div>
+      <span class="kicker">Inciso 1e</span>
+      <h1>Simulador de campaña de retención</h1>
+      <p>El umbral de contacto no es 0.5: es el punto donde el beneficio esperado de llamar a un cliente supera el costo de llamarlo. Mueva los supuestos y vea a cuántos clientes conviene contactar.</p>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <header><h3>Supuestos de la campaña</h3>
+      <p>Cálculo exacto sobre los 10,000 clientes, no sobre una aproximación.</p></header>
+      <div class="body">
+        <div class="ctrl">
+          <label for="s-efec">Efectividad de la campaña <b id="v-efec">20%</b></label>
+          <input type="range" id="s-efec" min="5" max="50" step="1" value="20">
+        </div>
+        <div class="ctrl">
+          <label for="s-costo">Costo por contacto <b id="v-costo">$25</b></label>
+          <input type="range" id="s-costo" min="5" max="200" step="5" value="25">
+        </div>
+        <div class="ctrl">
+          <label for="s-cap">Capacidad del área comercial <b id="v-cap">sin límite</b></label>
+          <input type="range" id="s-cap" min="250" max="10000" step="250" value="10000">
+        </div>
+        <div class="ctrl">
+          <label>Restringir a un segmento</label>
+          <div class="segbtns" id="filtro-cluster"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="card">
+        <header><h3>Resultado esperado de la campaña</h3></header>
+        <div class="body">
+          <div class="out" id="sim-out"></div>
+          <div class="nota" style="margin-top:13px" id="sim-nota"></div>
+        </div>
+      </div>
+      <div class="card">
+        <header><h3>Beneficio esperado según cuántos clientes se contacten</h3>
+        <p>El punto marcado es la configuración actual.</p></header>
+        <div class="body" id="ch-sim"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <header><h3>Composición de la campaña por segmento</h3>
+    <p>Quiénes entran en la lista con los supuestos actuales.</p></header>
+    <div class="body tablewrap" id="tb-simseg"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ PÁGINA 5 ══════════════════════════════ -->
+<section class="page" id="p-metodo">
+  <div class="pagehead">
+    <div>
+      <span class="kicker">Trazabilidad</span>
+      <h1>Metodología</h1>
+      <p>Las decisiones que sostienen los números de las páginas anteriores, incluidas las variables que se descartaron y por qué.</p>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <header><h3>Fuga de información detectada y neutralizada</h3>
+      <p>Dos variables predecían el resultado de forma perfecta por construcción del archivo, no por comportamiento del cliente.</p></header>
+      <div class="body stack" id="leakage"></div>
+    </div>
+    <div class="stack">
+      <div class="card">
+        <header><h3>Diseño de validación</h3></header>
+        <div class="body stack" id="validacion"></div>
+      </div>
+      <div class="card">
+        <header><h3>Limitaciones declaradas</h3></header>
+        <div class="body stack" id="limites"></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+</div>
+
+<script type="application/json" id="datos">__DATOS__</script>
+<script>
+const D = JSON.parse(document.getElementById("datos").textContent);
+const CC = ["--c0","--c1","--c2","--c3","--c4","--c5"];
+const col = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const nQ  = v => "$" + Math.round(v).toLocaleString("es-CO");
+const nQk = v => v>=1e6 ? "$"+(v/1e6).toFixed(1)+" M" : v>=1e3 ? "$"+(v/1e3).toFixed(0)+" k" : "$"+Math.round(v);
+const nN  = v => Math.round(v).toLocaleString("es-CO");
+const nP  = (v,d=1) => (100*v).toFixed(d)+"%";
+const esc = s => String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const el  = (h) => { const t=document.createElement("template"); t.innerHTML=h.trim(); return t.content.firstElementChild; };
+
+/* ─────────────── helpers de gráficos SVG ─────────────── */
+function svgWrap(w,h,inner,vb){ return `<svg viewBox="0 0 ${w} ${h}" ${vb||""} role="img" width="100%" height="auto">${inner}</svg>`; }
+
+function lineChart(pts,{w=440,h=250,xlab,ylab,marks=[]}={}){
+  const m={t:14,r:16,b:34,l:42}, iw=w-m.l-m.r, ih=h-m.t-m.b;
+  const X=v=>m.l+iw*v/100, Y=v=>m.t+ih*(1-v/100);
+  let g="";
+  for(let i=0;i<=4;i++){ const y=m.t+ih*i/4, v=100-25*i;
+    g+=`<line class="gridline" x1="${m.l}" y1="${y}" x2="${w-m.r}" y2="${y}"/>`;
+    g+=`<text class="axis" x="${m.l-7}" y="${y+3.5}" text-anchor="end">${v}</text>`; }
+  for(let i=0;i<=4;i++){ const x=X(25*i);
+    g+=`<text class="axis" x="${x}" y="${h-m.b+15}" text-anchor="middle">${25*i}</text>`; }
+  const dref=`M ${X(0)} ${Y(0)} L ${X(100)} ${Y(100)}`;
+  const d=pts.map((p,i)=>`${i?"L":"M"} ${X(p.x).toFixed(1)} ${Y(p.y).toFixed(1)}`).join(" ");
+  const area=d+` L ${X(100)} ${Y(0)} L ${X(0)} ${Y(0)} Z`;
+  let mk="";
+  marks.forEach(mm=>{ const p=pts.reduce((a,b)=>Math.abs(b.x-mm)<Math.abs(a.x-mm)?b:a);
+    mk+=`<line x1="${X(p.x)}" y1="${Y(0)}" x2="${X(p.x)}" y2="${Y(p.y)}" stroke="${col("--crimson")}" stroke-width="1" stroke-dasharray="3 3"/>`;
+    mk+=`<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="3.4" fill="${col("--crimson")}"/>`;
+    mk+=`<text class="axis" x="${X(p.x)+6}" y="${Y(p.y)-6}" fill="${col("--crimson")}" font-weight="600">${p.y.toFixed(0)}%</text>`; });
+  return svgWrap(w,h,`
+    <defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${col("--accent")}" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="${col("--accent")}" stop-opacity="0"/></linearGradient></defs>
+    ${g}
+    <path d="${area}" fill="url(#lg)"/>
+    <path d="${dref}" stroke="${col("--ink-3")}" stroke-width="1" stroke-dasharray="4 4" fill="none"/>
+    <path d="${d}" stroke="${col("--accent")}" stroke-width="2.2" fill="none" stroke-linejoin="round"/>
+    ${mk}
+    <text class="axis" x="${m.l+iw/2}" y="${h-3}" text-anchor="middle">${xlab||""}</text>
+    <text class="axis" transform="translate(11,${m.t+ih/2}) rotate(-90)" text-anchor="middle">${ylab||""}</text>`);
+}
+
+function barsChart(items,{w=440,h=250,valKey="v",labKey="k",fmt=v=>v,color}={}){
+  const m={t:12,r:12,b:34,l:42}, iw=w-m.l-m.r, ih=h-m.t-m.b;
+  const mx=Math.max(...items.map(d=>d[valKey]))||1;
+  const bw=iw/items.length;
+  let g="";
+  for(let i=0;i<=4;i++){ const y=m.t+ih*i/4;
+    g+=`<line class="gridline" x1="${m.l}" y1="${y}" x2="${w-m.r}" y2="${y}"/>`;
+    g+=`<text class="axis" x="${m.l-7}" y="${y+3.5}" text-anchor="end">${fmt(mx*(1-i/4))}</text>`; }
+  items.forEach((d,i)=>{
+    const bh=ih*d[valKey]/mx, x=m.l+i*bw+bw*.14, y=m.t+ih-bh;
+    g+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw*.72).toFixed(1)}" height="${Math.max(bh,.6).toFixed(1)}" fill="${color||col("--accent")}" rx="1.5"><title>${esc(d[labKey])}: ${fmt(d[valKey])}</title></rect>`;
+    if(items.length<=22 && i%(items.length>13?2:1)===0)
+      g+=`<text class="axis" x="${(x+bw*.36).toFixed(1)}" y="${h-m.b+15}" text-anchor="middle">${esc(d[labKey])}</text>`;
+  });
+  return svgWrap(w,h,g);
+}
+
+function hbars(items,{w=440,rowH=25,fmt=v=>v,color,labW=170}={}){
+  const h=items.length*rowH+8, mx=Math.max(...items.map(d=>d.v))||1, bw=w-labW-58;
+  let g="";
+  items.forEach((d,i)=>{
+    const y=i*rowH+6, l=bw*d.v/mx;
+    g+=`<text x="0" y="${y+12}" class="axis" fill="${col("--ink-2")}" font-family="Source Sans 3,sans-serif" font-size="12">${esc(d.k)}</text>`;
+    g+=`<rect x="${labW}" y="${y+3}" width="${Math.max(l,1).toFixed(1)}" height="12" rx="2.5" fill="${d.color||color||col("--accent")}"/>`;
+    g+=`<text x="${labW+l+6}" y="${y+13}" class="axis" font-weight="600" fill="${col("--ink-2")}">${fmt(d.v)}</text>`;
+  });
+  return svgWrap(w,h,g);
+}
+
+function groupedBars(groups,{w=760,h=250,fmt=v=>v}={}){
+  const m={t:14,r:12,b:46,l:46}, iw=w-m.l-m.r, ih=h-m.t-m.b;
+  const mx=Math.max(...groups.flatMap(g=>g.vals))||1, gw=iw/groups.length;
+  let g2="";
+  for(let i=0;i<=4;i++){ const y=m.t+ih*i/4;
+    g2+=`<line class="gridline" x1="${m.l}" y1="${y}" x2="${w-m.r}" y2="${y}"/>`;
+    g2+=`<text class="axis" x="${m.l-7}" y="${y+3.5}" text-anchor="end">${fmt(mx*(1-i/4))}</text>`; }
+  groups.forEach((gr,i)=>{
+    const n=gr.vals.length, bw=gw*.72/n;
+    gr.vals.forEach((v,j)=>{
+      const bh=ih*v/mx, x=m.l+i*gw+gw*.14+j*bw, y=m.t+ih-bh;
+      g2+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw*.86).toFixed(1)}" height="${Math.max(bh,.8).toFixed(1)}" rx="1.5" fill="${gr.colors[j]}"><title>${esc(gr.k)}: ${fmt(v)}</title></rect>`;
+    });
+    const words=String(gr.k).split(" "); let ln=[],cur="";
+    words.forEach(wd=>{ if((cur+" "+wd).trim().length>15){ln.push(cur);cur=wd;} else cur=(cur+" "+wd).trim(); });
+    ln.push(cur);
+    g2+=`<text class="axis" x="${(m.l+i*gw+gw/2).toFixed(1)}" y="${h-m.b+13}" text-anchor="middle">`+
+        ln.slice(0,2).map((t,k)=>`<tspan x="${(m.l+i*gw+gw/2).toFixed(1)}" dy="${k?10:0}">${esc(t)}</tspan>`).join("")+`</text>`;
+  });
+  return svgWrap(w,h,g2);
+}
+
+/* ─────────────── KPIs ─────────────── */
+function kpi(lab,val,note,cls){ return `<div class="kpi ${cls||""}"><span class="lab">${lab}</span><span class="val">${val}</span><span class="note">${note||""}</span></div>`; }
+const K=D.kpi;
+
+document.getElementById("kpis-fuga").innerHTML =
+  kpi("Clientes activos", nN(K.clientes), "base de predicción") +
+  kpi("Fugas esperadas", nN(K.fugas_esperadas), nP(K.prob_media)+" de la base", "risk") +
+  kpi("Riesgo alto", nN(K.riesgo_alto), "probabilidad sobre 50%", "risk") +
+  kpi("Saldo en riesgo alto", nQk(K.saldo_riesgo_alto), "de "+nQk(K.saldo_total)+" totales") +
+  kpi("Captura al 20%", K.captura20+"%", "de las fugas, contactando 1 de cada 5", "ok") +
+  kpi("AUC-ROC", K.auc_roc.toFixed(3), "validación fuera de muestra", "ok") +
+  kpi("Brier score", K.brier.toFixed(4), "error de calibración", "ok");
+
+/* ─────────────── Página 1 ─────────────── */
+document.getElementById("ch-ganancia").innerHTML =
+  lineChart(D.ganancia,{xlab:"% de clientes contactados",ylab:"% de fugas capturadas",marks:[10,20,30]});
+
+document.getElementById("ch-histo").innerHTML =
+  barsChart(D.histograma.map(d=>({k:(+d.centro).toFixed(1),v:d.n})),{fmt:v=>nN(v)}) +
+  `<p style="font-size:12.5px;color:var(--ink-3);margin:6px 0 0">Eje horizontal: probabilidad de fuga. La cartera se parte en un grupo claramente retenido y otro claramente en riesgo; hay poca zona gris.</p>`;
+
+(function(){
+  const r=D.deciles_holdout;
+  document.getElementById("tb-calib").innerHTML = `<table><thead><tr>
+    <th>Decil</th><th class="num">Clientes</th><th class="num">Probabilidad predicha</th>
+    <th class="num">Tasa real observada</th><th class="num">Lift</th></tr></thead><tbody>`+
+    r.map(d=>`<tr><td class="num">${d.decil}</td><td class="num">${nN(d.n)}</td>
+      <td class="num">${nP(d.prob_media_predicha)}</td>
+      <td class="num"><b>${nP(d.tasa_real_observada)}</b></td>
+      <td class="num">${(+d.lift).toFixed(2)}</td></tr>`).join("")+
+    `</tbody></table><p style="font-size:12.5px;color:var(--ink-3);margin:9px 0 0">
+     Las dos columnas centrales coinciden decil a decil: cuando el modelo dice 93%, se van 92 de cada 100.</p>`;
+})();
+
+(function(){
+  const s=D.shap.map((d,i)=>({k:d.nombre_negocio,v:d["peso_relativo_%"],
+      color:i===0?col("--accent"):col("--c1")}));
+  document.getElementById("tb-shap").innerHTML = hbars(s,{fmt:v=>v.toFixed(1)+"%",labW:196})+
+  `<p style="font-size:12.5px;color:var(--ink-3);margin:8px 0 0">
+   <b>Lectura de negocio:</b> la señal dominante es qué tan avanzado va el cliente en el pago de su crédito.
+   Un cliente que ya amortizó casi todo y no ha vuelto a solicitar está en la puerta de salida; uno con un
+   desembolso reciente no se va a ir.</p>`;
+})();
+
+(function(){
+  const r=D.escalera;
+  document.getElementById("tb-escalera").innerHTML=`<table><thead><tr>
+    <th>Modelo</th><th class="num">AUC-PR</th><th class="num">AUC-ROC</th><th class="num">KS</th><th class="num">Lift decil 1</th>
+    </tr></thead><tbody>`+
+    r.map(d=>{const win=d.modelo.startsWith("3. ");
+      return `<tr${win?' style="background:var(--accent-soft)"':''}>
+      <td>${esc(d.modelo)}${win?' <span class="pill n">elegido</span>':''}</td>
+      <td class="num">${(+d.AUC_PR).toFixed(3)}</td><td class="num">${(+d.AUC_ROC).toFixed(3)}</td>
+      <td class="num">${(+d.KS).toFixed(3)}</td><td class="num">${(+d.lift_decil_1).toFixed(2)}</td></tr>`}).join("")+
+    `</tbody></table>`;
+})();
+
+(function(){
+  const r=D.deciles_pred;
+  document.getElementById("tb-deciles").innerHTML=`<table><thead><tr>
+    <th>Decil</th><th class="num">Clientes</th><th class="num">Prob. media</th>
+    <th class="num">Fugas esperadas</th><th class="num">Saldo</th><th class="num">Captura acum.</th>
+    </tr></thead><tbody>`+
+    r.map(d=>`<tr><td class="num">${d.decil_riesgo}</td><td class="num">${nN(d.clientes)}</td>
+      <td class="num">${nP(d.prob_media)}</td><td class="num">${nN(d.fugas_esperadas)}</td>
+      <td class="num">${nQk(d.saldo_en_riesgo)}</td>
+      <td class="num">${(+d["captura_acum_%"]).toFixed(1)}%</td></tr>`).join("")+
+    `</tbody></table>`;
+})();
+
+/* ─────────────── Página 2 ─────────────── */
+const CL = D.clusters.slice().sort((a,b)=>b.tasa_hist-a.tasa_hist);
+const colorDe = id => col(CC[id % CC.length]);
+
+document.getElementById("kpis-seg").innerHTML =
+  kpi("Segmentos", String(D.clusters.length), "k elegido por silueta, Davies-Bouldin y estabilidad") +
+  kpi("Estabilidad", "ARI 0.97", "reagrupamiento por bootstrap", "ok") +
+  kpi("Segmento más riesgoso", nP(CL[0].tasa_hist,0), esc(CL[0].nombre), "risk") +
+  kpi("Segmento más valioso", nP(CL[CL.length-1].tasa_hist,1), esc(CL[CL.length-1].nombre), "ok") +
+  kpi("Concentración de cartera", nP(Math.max(...D.clusters.map(c=>c.saldo))/D.kpi.saldo_total,0), "en un solo segmento");
+
+document.getElementById("ch-clusters").innerHTML =
+  groupedBars(CL.map(c=>({k:c.nombre,vals:[100*c.tasa_hist,100*c.prob_activos],
+    colors:[col("--accent"),col("--crimson")]})),{fmt:v=>v.toFixed(0)+"%"}) +
+  `<div class="legend"><span><i style="background:${col("--accent")}"></i>Tasa histórica observada</span>
+   <span><i style="background:${col("--crimson")}"></i>Probabilidad media de los activos</span></div>`;
+
+document.getElementById("fichas").innerHTML = CL.map(c=>{
+  const nivel = c.tasa_hist>.5?"alto":c.tasa_hist>.2?"medio":"bajo";
+  return `<div class="card"><div class="body">
+    <div class="clusterhead"><span class="dot" style="background:${colorDe(c.id)}"></span>
+      <h3 style="font-size:15px;flex:1;min-width:0">${esc(c.nombre)}</h3>
+      <span class="pill ${nivel}">${nP(c.tasa_hist,0)} fuga</span></div>
+    <p style="font-size:12.5px;color:var(--ink-3);margin:7px 0 10px">
+      ${nN(c.n_hist)} clientes históricos · ${c.pct_clientes}% de la base · ${c.pct_cartera}% de la cartera</p>
+    <div class="metricrow"><span>Capital mediano</span><span>${nQ(c.capital_medio)}</span></div>
+    <div class="metricrow"><span>Saldo mediano</span><span>${nQ(c.saldo_medio)}</span></div>
+    <div class="metricrow"><span>Avance del ciclo</span><span>${nP(1-c.ratio_ciclo,0)} pagado</span></div>
+    <div class="metricrow"><span>Créditos del cliente</span><span>${c.creditos}</span></div>
+    <div class="metricrow"><span>Tasa nominal</span><span>${c.tasa_nominal}</span></div>
+    <div class="metricrow"><span>En mora (M2/M3)</span><span>${nP(c.pct_M2M3,0)}</span></div>
+    <div class="metricrow"><span>Activos hoy</span><span>${nN(c.n_activos)}</span></div>
+    <div class="metricrow"><span>Recomendados a campaña</span><span>${nN(c.campana)}</span></div>
+    <p style="font-size:12.5px;color:var(--ink-2);margin:11px 0 0;padding-top:9px;border-top:1px solid var(--line)">
+      <b>Acción:</b> ${esc(c.accion)}</p>
+  </div></div>`;
+}).join("");
+
+(function(){
+  const rows=D.cruce, saldo=D.cruce_saldo;
+  const cats=["Alto","Medio","Bajo"];
+  const mx=Math.max(...rows.flatMap(r=>cats.map(c=>+r[c]||0)));
+  const nom={}; D.clusters.forEach(c=>nom[c.id]=c.nombre);
+  document.getElementById("tb-cruce").innerHTML=`<table><thead><tr><th>Segmento</th>`+
+    cats.map(c=>`<th class="num">${c}</th>`).join("")+`<th class="num">Saldo alto riesgo</th></tr></thead><tbody>`+
+    rows.map(r=>{
+      const s=saldo.find(x=>x.cluster===r.cluster)||{};
+      return `<tr><td><span class="dot" style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${colorDe(r.cluster)};margin-right:6px"></span>${esc(nom[r.cluster]||r.cluster)}</td>`+
+      cats.map(c=>{const v=+r[c]||0, o=.10+.85*v/mx;
+        return `<td class="num" style="background:${c==="Alto"?`color-mix(in srgb, var(--alto-bg) ${Math.round(o*100)}%, transparent)`:c==="Medio"?`color-mix(in srgb, var(--medio-bg) ${Math.round(o*100)}%, transparent)`:`color-mix(in srgb, var(--bajo-bg) ${Math.round(o*100)}%, transparent)`}">${nN(v)}</td>`}).join("")+
+      `<td class="num">${nQk(+s.Alto||0)}</td></tr>`}).join("")+`</tbody></table>`;
+})();
+
+(function(){
+  document.getElementById("tb-region").innerHTML=`<table><thead><tr>
+    <th>Región</th><th class="num">Clientes</th><th class="num">Prob. media</th>
+    <th class="num">Fugas esp.</th><th class="num">A campaña</th></tr></thead><tbody>`+
+    D.region.map(d=>`<tr><td class="num">${esc(d.REGION)}</td><td class="num">${nN(d.clientes)}</td>
+      <td class="num">${nP(d.prob_media)}</td><td class="num">${nN(d.fugas)}</td>
+      <td class="num">${nN(d.campana)}</td></tr>`).join("")+`</tbody></table>`;
+})();
+
+/* ─────────────── Página 3 ─────────────── */
+const B=D.bakery.resumen;
+document.getElementById("kpis-bakery").innerHTML =
+  kpi("Tickets", nN(B.n_tickets), "transacciones analizadas") +
+  kpi("Productos", String(B.n_productos), "catálogo completo") +
+  kpi("Artículos por ticket", B.items_por_ticket_media.toFixed(2), "promedio") +
+  kpi("Reglas con lift > 1", nN(B.n_reglas_lift_gt_1), "antes de depurar") +
+  kpi("Hallazgos distintos", String(B.n_reglas_seleccionadas), "después de depurar", "ok") +
+  kpi("Lift máximo", B.lift_maximo.toFixed(1)+"×", "sobre la compra al azar", "ok");
+
+document.getElementById("nota-bakery").innerHTML =
+  `<strong>Por qué estas reglas y no las de mayor confianza (inciso 2b).</strong>
+   En esta base ningún producto es ubicuo — el más vendido, ${esc(B.producto_top)}, aparece en apenas
+   ${nP(B.soporte_top)} de los tickets — así que la patología clásica de “confianza altísima con lift ≈ 1”
+   casi no aparece. El problema real aquí es la <strong>redundancia</strong>: las
+   ${nN(B.n_reglas_lift_gt_1)} reglas con lift mayor que 1 son permutaciones internas de unas pocas canastas.
+   Presentarlas como ${nN(B.n_reglas_lift_gt_1)} hallazgos sería un error de lectura. Al conservar una sola
+   regla representante por conjunto de productos y eliminar los conjuntos contenidos en otro mejor, quedan
+   <strong>${B.n_reglas_seleccionadas} hallazgos comerciales genuinamente distintos</strong>.`;
+
+document.getElementById("tb-reglas").innerHTML=`<table><thead><tr>
+  <th>Canasta</th><th class="num">Tickets</th><th class="num">Soporte</th>
+  <th class="num">Confianza</th><th class="num">Lift</th></tr></thead><tbody>`+
+  D.bakery.reglas.map(r=>`<tr>
+    <td>${esc(r.productos_del_combo).replace(/ \+ /g,' <span style="color:var(--ink-3)">+</span> ')}</td>
+    <td class="num">${nN(r.n_tickets)}</td><td class="num">${nP(r.support,1)}</td>
+    <td class="num">${nP(r.confidence,0)}</td>
+    <td class="num"><b style="color:var(--accent)">${(+r.lift).toFixed(1)}×</b></td></tr>`).join("")+
+  `</tbody></table>`;
+
+document.getElementById("ch-prod").innerHTML =
+  hbars(D.bakery.productos.map(p=>({k:p.Unnamed_0||p[Object.keys(p)[0]],v:100*p.soporte})),
+        {fmt:v=>v.toFixed(1)+"%",labW:150});
+
+document.getElementById("recos-bakery").innerHTML = `
+  <ol style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.62;color:var(--ink-2)">
+    <li><b>Combos empaquetados.</b> Las tres canastas de mayor lift se venden juntas 25 a 36 veces más de lo que ocurriría por azar: son combos con descuento, no sugerencias.</li>
+    <li><b>Disposición del mostrador.</b> Colocar contiguos los productos de cada canasta y ubicar la bebida asociada junto a su repostería.</li>
+    <li><b>Recomendador en punto de venta y pedido en línea.</b> Al agregar tres de los cuatro productos de una canasta, sugerir el cuarto: la confianza pasa del 90%.</li>
+    <li><b>Producción y compras.</b> Los productos de una misma canasta deben planificarse con la misma proyección de demanda; quebrar el stock de uno arrastra la venta de los otros.</li>
+    <li><b>Cómo medirlo.</b> Prueba A/B por sucursal o por semana, midiendo ticket promedio y unidades por ticket contra un grupo de control.</li>
+  </ol>
+  <div class="nota" style="margin-top:12px;font-size:12.5px">La base no incluye fecha, hora, cantidad ni precio,
+  por lo que no fue posible ordenar las reglas por impacto económico ni analizar franjas horarias. Con esos
+  campos, la priorización se haría por dinero y no por lift.</div>`;
+
+/* ─────────────── Página 4: simulador ─────────────── */
+const V=D.vec, N=V.p.length;
+let filtro=null;
+const ctrl={efec:document.getElementById("s-efec"),costo:document.getElementById("s-costo"),cap:document.getElementById("s-cap")};
+
+document.getElementById("filtro-cluster").innerHTML =
+  `<button data-c="all" aria-pressed="true">Todos</button>` +
+  D.clusters.map(c=>`<button data-c="${c.id}" aria-pressed="false">${esc(c.nombre)}</button>`).join("");
+
+document.getElementById("filtro-cluster").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  [...e.currentTarget.children].forEach(x=>x.setAttribute("aria-pressed", x===b));
+  filtro = b.dataset.c==="all" ? null : +b.dataset.c;
+  render();
+});
+
+function calcular(efec,costo,cap){
+  const idx=[];
+  for(let i=0;i<N;i++){ if(filtro!==null && V.cluster[i]!==filtro) continue;
+    const ben=V.p[i]*efec*V.valor[i]-costo;
+    if(ben>0) idx.push([ben,i]); }
+  idx.sort((a,b)=>b[0]-a[0]);
+  const sel=idx.slice(0,cap);
+  let fugas=0,ben=0,saldo=0; const porCl={};
+  sel.forEach(([b,i])=>{ fugas+=V.p[i]; ben+=b; saldo+=V.saldo[i];
+    porCl[V.cluster[i]]=(porCl[V.cluster[i]]||0)+1; });
+  const costoT=sel.length*costo;
+  return {n:sel.length,fugas,ret:fugas*efec,ben,costoT,saldo,porCl,
+          roi:costoT?ben/costoT:0, elegibles:idx.length};
+}
+
+function curva(efec,costo){
+  const idx=[];
+  for(let i=0;i<N;i++){ if(filtro!==null && V.cluster[i]!==filtro) continue;
+    idx.push([V.p[i]*efec*V.valor[i]-costo,i]); }
+  idx.sort((a,b)=>b[0]-a[0]);
+  const pts=[]; let acc=0;
+  const step=Math.max(1,Math.floor(idx.length/120));
+  for(let i=0;i<idx.length;i++){ acc+=idx[i][0];
+    if(i%step===0||i===idx.length-1) pts.push({n:i+1,v:acc}); }
+  return pts;
+}
+
+function curvaChart(pts,actual){
+  const w=440,h=230,m={t:12,r:14,b:34,l:56}, iw=w-m.l-m.r, ih=h-m.t-m.b;
+  if(!pts.length) return "";
+  const mxN=pts[pts.length-1].n, mxV=Math.max(...pts.map(p=>p.v),1), mnV=Math.min(...pts.map(p=>p.v),0);
+  const X=n=>m.l+iw*n/mxN, Y=v=>m.t+ih*(1-(v-mnV)/(mxV-mnV||1));
+  let g="";
+  for(let i=0;i<=4;i++){ const y=m.t+ih*i/4, v=mnV+(mxV-mnV)*(1-i/4);
+    g+=`<line class="gridline" x1="${m.l}" y1="${y}" x2="${w-m.r}" y2="${y}"/>`;
+    g+=`<text class="axis" x="${m.l-7}" y="${y+3.5}" text-anchor="end">${nQk(v)}</text>`; }
+  for(let i=0;i<=4;i++){ const n=mxN*i/4;
+    g+=`<text class="axis" x="${X(n)}" y="${h-m.b+15}" text-anchor="middle">${nN(n)}</text>`; }
+  const d=pts.map((p,i)=>`${i?"L":"M"} ${X(p.n).toFixed(1)} ${Y(p.v).toFixed(1)}`).join(" ");
+  const best=pts.reduce((a,b)=>b.v>a.v?b:a);
+  let mk="";
+  if(actual&&actual.n){ const p=pts.reduce((a,b)=>Math.abs(b.n-actual.n)<Math.abs(a.n-actual.n)?b:a);
+    mk=`<circle cx="${X(p.n)}" cy="${Y(p.v)}" r="4" fill="${col("--crimson")}"/>
+        <line x1="${X(p.n)}" y1="${m.t}" x2="${X(p.n)}" y2="${m.t+ih}" stroke="${col("--crimson")}" stroke-width="1" stroke-dasharray="3 3"/>`; }
+  return svgWrap(w,h,`${g}
+    <line x1="${m.l}" y1="${Y(0)}" x2="${w-m.r}" y2="${Y(0)}" stroke="${col("--ink-3")}" stroke-width="1"/>
+    <path d="${d}" stroke="${col("--accent")}" stroke-width="2.2" fill="none"/>
+    <circle cx="${X(best.n)}" cy="${Y(best.v)}" r="3" fill="${col("--accent")}"/>
+    <text class="axis" x="${X(best.n)}" y="${Y(best.v)-8}" text-anchor="middle" fill="${col("--accent")}" font-weight="600">óptimo ${nN(best.n)}</text>
+    ${mk}
+    <text class="axis" x="${m.l+iw/2}" y="${h-3}" text-anchor="middle">clientes contactados</text>`);
+}
+
+function render(){
+  const efec=+ctrl.efec.value/100, costo=+ctrl.costo.value, capRaw=+ctrl.cap.value;
+  const cap = capRaw>=10000 ? 1e9 : capRaw;
+  document.getElementById("v-efec").textContent=ctrl.efec.value+"%";
+  document.getElementById("v-costo").textContent="$"+costo;
+  document.getElementById("v-cap").textContent= capRaw>=10000 ? "sin límite" : nN(capRaw)+" contactos";
+
+  const r=calcular(efec,costo,cap);
+  document.getElementById("sim-out").innerHTML=
+    `<div><div class="lab">Clientes a contactar</div><div class="val">${nN(r.n)}</div></div>
+     <div><div class="lab">Fugas en la lista</div><div class="val">${nN(r.fugas)}</div></div>
+     <div><div class="lab">Retenciones esperadas</div><div class="val">${nN(r.ret)}</div></div>
+     <div><div class="lab">Costo de la campaña</div><div class="val">${nQ(r.costoT)}</div></div>
+     <div><div class="lab">Beneficio esperado</div><div class="val" style="color:${r.ben>0?col("--bajo"):col("--alto")}">${nQ(r.ben)}</div></div>
+     <div><div class="lab">Retorno</div><div class="val">${r.roi.toFixed(1)}×</div></div>`;
+
+  const pct = D.kpi.fugas_esperadas ? r.fugas/D.kpi.fugas_esperadas : 0;
+  document.getElementById("sim-nota").innerHTML =
+    `Con estos supuestos conviene contactar a <strong>${nN(r.n)} clientes</strong>
+     (${nP(r.n/N,1)} de la cartera), que concentran <strong>${nP(pct,0)} de todas las fugas esperadas</strong>.
+     Por cada peso invertido en la campaña se esperan <strong>$${(1+r.roi).toFixed(2)}</strong> de retorno.
+     ${r.elegibles>r.n?`La capacidad deja fuera a ${nN(r.elegibles-r.n)} clientes que todavía serían rentables de contactar.`:
+       `Ningún cliente rentable queda fuera por capacidad.`}`;
+
+  document.getElementById("ch-sim").innerHTML=curvaChart(curva(efec,costo),r);
+
+  const nom={}; D.clusters.forEach(c=>nom[c.id]=c.nombre);
+  const tot=D.clusters.map(c=>c.n_activos).reduce((a,b)=>a+b,0);
+  document.getElementById("tb-simseg").innerHTML=`<table><thead><tr>
+    <th>Segmento</th><th class="num">Activos</th><th class="num">En la campaña</th>
+    <th class="num">Cobertura</th><th></th></tr></thead><tbody>`+
+    D.clusters.map(c=>{ const n=r.porCl[c.id]||0, cov=c.n_activos?n/c.n_activos:0;
+      return `<tr><td><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${colorDe(c.id)};margin-right:6px"></span>${esc(c.nombre)}</td>
+      <td class="num">${nN(c.n_activos)}</td><td class="num">${nN(n)}</td>
+      <td class="num">${nP(cov,0)}</td>
+      <td style="width:120px"><div class="bar"><i style="width:${(100*cov).toFixed(1)}%;background:${colorDe(c.id)}"></i></div></td></tr>`}).join("")+
+    `</tbody><tfoot><tr><td>Total</td><td class="num">${nN(tot)}</td><td class="num">${nN(r.n)}</td>
+      <td class="num">${nP(r.n/tot,0)}</td><td></td></tr></tfoot></table>`;
+}
+["efec","costo","cap"].forEach(k=>ctrl[k].addEventListener("input",render));
+
+/* ─────────────── Página 5 ─────────────── */
+document.getElementById("leakage").innerHTML=`
+  <div class="nota alerta"><strong>Código de cliente y código de préstamo — descartados.</strong>
+    En la base histórica estas dos columnas predicen el resultado con exactitud perfecta
+    (AUC = 1.000): los retirados ocupan los códigos 1 a 34,354 y los renovados del 34,355 en adelante.
+    El archivo fue ordenado por estado antes de numerarse, así que el código no describe al cliente
+    sino la respuesta. En la base de predicción los códigos fueron renumerados de 1 a 10,000, por lo
+    que un modelo que se apoyara en ellos obtendría métricas perfectas en entrenamiento y ruido puro
+    al aplicarse.</div>
+  <div class="nota alerta"><strong>Primer crédito — tratado aparte.</strong>
+    En el histórico, los 12,791 clientes con un solo crédito son retirados sin excepción, porque
+    “renovado” exige por definición un segundo crédito: es la variable objetivo escrita de otra forma.
+    Los 1,873 clientes activos en esa situación no pueden recibir una probabilidad de 100%. El
+    ordenamiento dentro del segmento se toma del modelo y el nivel se fija extrapolando la curva
+    empírica de fuga frente al número de créditos, que sitúa el primer crédito en ${nP(K.tasa_k1,0)}.</div>
+  <div class="nota"><strong>Deriva entre las dos bases.</strong>
+    El capital concedido usa rejillas de valores casi disjuntas entre el histórico y la base de
+    predicción (PSI = 2.74). Por eso el modelo se apoya en el <em>ratio</em> saldo/capital, que es
+    invariante a la escala del monto, y no en el monto absoluto.</div>`;
+
+document.getElementById("validacion").innerHTML=`
+  <div class="nota"><strong>Sin partición temporal, y se dice.</strong>
+    Las bases no traen fechas ni estructura de panel: son una fila por cliente. Una validación fuera
+    de tiempo es imposible, así que se sustituye por tres bloques disjuntos —entrenamiento 60%,
+    calibración 20%, prueba 20%— y validación cruzada de cinco particiones.</div>
+  <div class="nota"><strong>Agrupación por vector de atributos.</strong>
+    7,803 filas tienen atributos idénticos a otra fila. Con particiones aleatorias simples esas filas
+    caerían a la vez en entrenamiento y prueba, inflando las métricas. Se agrupan para impedirlo.</div>
+  <div class="nota"><strong>Métricas del problema, no de conveniencia.</strong>
+    AUC-PR como métrica principal por el desbalance, KS y lift por decil para la lectura comercial, y
+    Brier con curva de confiabilidad para verificar que la probabilidad sea interpretable como
+    porcentaje, que es lo que pide el inciso 1d.</div>`;
+
+document.getElementById("limites").innerHTML=`
+  <div class="nota"><strong>Predecir quién se va no es predecir a quién convence la campaña.</strong>
+    Hay clientes que se irán de todos modos y otros que no necesitaban el contacto. Medir el efecto
+    real exige modelado de incrementalidad, que a su vez exige una campaña con grupo de control.
+    Recomendación: ejecutar la primera campaña dejando un 10% de control aleatorio.</div>
+  <div class="nota"><strong>Supuestos económicos explícitos.</strong>
+    El valor del cliente se aproxima con el margen del siguiente ciclo (capital × tasa × 30% de margen
+    neto) y el costo de contacto se fija en $25 (pesos colombianos, misma unidad monetaria de la base). Ambos son parámetros del simulador: si el área
+    comercial tiene cifras propias, el resultado se recalcula sin tocar el modelo.</div>
+  <div class="nota"><strong>Sin variables de comportamiento de pago.</strong>
+    La base no incluye días de mora, historial de cuotas ni fechas de desembolso. Con esas variables
+    —las más predictivas en cartera de microcrédito— el modelo mejoraría de forma apreciable.</div>`;
+
+/* ─────────────── Navegación y tema ─────────────── */
+document.getElementById("nav").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  [...e.currentTarget.querySelectorAll("button")].forEach(x=>x.setAttribute("aria-current", x===b));
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
+  document.getElementById("p-"+b.dataset.p).classList.add("on");
+  window.scrollTo({top:0,behavior:"instant"});
+});
+
+document.getElementById("tema").addEventListener("click",()=>{
+  const cur=document.documentElement.getAttribute("data-theme");
+  const oscuro = cur ? cur==="dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  document.documentElement.setAttribute("data-theme", oscuro?"light":"dark");
+  redibujar();
+});
+function redibujar(){
+  document.getElementById("ch-ganancia").innerHTML=lineChart(D.ganancia,{xlab:"% de clientes contactados",ylab:"% de fugas capturadas",marks:[10,20,30]});
+  render();
+}
+matchMedia("(prefers-color-scheme:dark)").addEventListener("change",redibujar);
+
+render();
+</script>

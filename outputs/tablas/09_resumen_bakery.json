@@ -1,0 +1,12 @@
+{
+  "n_tickets": 9981,
+  "n_productos": 50,
+  "items_por_ticket_media": 3.5573589820659253,
+  "soporte_minimo": 0.01,
+  "n_itemsets": 124,
+  "n_reglas_lift_gt_1": 352,
+  "n_reglas_seleccionadas": 14,
+  "lift_maximo": 36.40938023450587,
+  "producto_top": "Coffee Eclair",
+  "soporte_top": 0.10860635206893098
+}

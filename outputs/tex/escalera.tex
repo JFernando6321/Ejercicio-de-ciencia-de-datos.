@@ -1,0 +1,12 @@
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+\textbf{Modelo} & \textbf{AUC-PR} & \textbf{AUC-ROC} & \textbf{KS} & \textbf{Lift decil 1} & \textbf{Captura al 20\%} \\
+\midrule
+Regla de negocio (ratio$<$0.15 ó ETAPA$>$=M2) & 0.520 & 0.807 & 0.614 & 1.93 & 41.5\% \\
+Regresión logística & 0.774 & 0.918 & 0.699 & 3.19 & 58.8\% \\
+Random Forest & 0.817 & 0.931 & 0.714 & 3.40 & 61.7\% \\
+LightGBM & 0.848 & 0.944 & 0.749 & 3.52 & 63.5\% \\
+Ensamble (promedio de rangos) & 0.837 & 0.939 & 0.733 & 3.47 & 63.0\% \\
+LightGBM SIN variables de saldo (robustez) & 0.696 & 0.850 & 0.510 & 3.20 & 51.3\% \\
+\bottomrule
+\end{tabular}

@@ -1,0 +1,8 @@
+data/
+outputs/modelos/*.joblib
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk

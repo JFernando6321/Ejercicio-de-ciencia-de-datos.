@@ -1,0 +1,15 @@
+columna,dtype,pct_nulos,nunique,en_prediccion,ejemplo
+CODIGO CLIENTE,int64,0.0,78829,True,36253
+CODIGO PRESTAMO,int64,0.0,78829,True,362530
+REGION,int64,0.0,18,True,11
+AGENCIA,int64,0.0,138,True,38
+PRODUCTO,int64,0.0,25,True,44
+SUBPRODUCTO,int64,0.0,40,True,9
+TIPO DE CREDITO,str,0.0,12,True,C                                             
+TASA_NOMINAL,float64,0.0,63,True,55.5
+SEXO,str,0.0,3,True,F
+CAPITAL_CONCEDIDO,float64,0.0,1893,True,1200.0
+SALDO_CAPITAL,float64,0.0,42353,True,236.58
+ETAPA,str,0.0,3,True,M1
+CREDITOS ANTERIORES,int64,0.0,32,True,2
+ESTADO,str,0.0,2,False,Cliente Renovado

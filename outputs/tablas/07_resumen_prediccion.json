@@ -1,0 +1,14 @@
+{
+  "tasa_k1_estimada": 0.49565507885669413,
+  "prob_media_global": 0.34422535413886046,
+  "fugas_esperadas": 3442.2535413886044,
+  "n_campana_base": 4957,
+  "margen_neto_supuesto": 0.3,
+  "costo_contacto": 25.0,
+  "efectividad_base": 0.2,
+  "captura_top10": 0.27369406537396845,
+  "captura_top20": 0.5036546071161124,
+  "captura_top30": 0.6975658387156679,
+  "saldo_total_base": 57247462.78,
+  "saldo_riesgo_alto": 2587990.66
+}
