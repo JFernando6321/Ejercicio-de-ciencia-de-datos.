@@ -1,6 +1,5 @@
 # Prueba técnica — Especialista en Ciencia de Datos
-### Fundación Génesis Empresarial · Julio Vicente
-
+ 
 Predicción de fuga de clientes, segmentación y reglas de asociación.
 
 ---
@@ -33,7 +32,7 @@ determinista.
 ## Estructura
 
 ```
-data/                      Bases originales (no versionadas)
+data/                      Bases originales 
 src/
   00_reconocimiento.py       Estructura, esquemas, compatibilidad entre bases
   01_auditoria.py            AUC univariado, deriva PSI, calidad, duplicados
@@ -67,7 +66,7 @@ DECISIONES.md                Registro de decisiones metodológicas con su eviden
 
 | Archivo | Contenido | Responde |
 |---|---|---|
-| `Prueba_Tecnica_CD_Julio_Vicente.pdf` | Informe de 24 páginas | todo |
+| `Prueba_Tecnica_CD_Julio_Vicente.pdf` | Informe PDF   | todo |
 | `Genesis_Churn_Prediccion_Julio_Vicente.xlsx` | 10,000 clientes con probabilidad, decil, segmento y recomendación | 1.d, 1.e |
 | `Genesis_Segmentacion_Julio_Vicente.xlsx` | Perfiles de segmento y asignación por cliente | 1.f |
 | `Genesis_Reglas_Asociacion_Julio_Vicente.xlsx` | Canastas y reglas completas | 2 |
