@@ -89,12 +89,7 @@ clientes históricos con un solo crédito son retirados sin excepción, porque
 «renovado» exige por definición un segundo crédito. Los 1,873 activos en esa
 situación no pueden recibir probabilidad 100%.
 
-Detalle y evidencia de ambos en `DECISIONES.md`.
-
+ 
 ---
 
-## Advertencia sobre los datos
-
-`data/` contiene información de clientes de una entidad financiera. No se versiona
-ni se publica en ningún servicio externo. El tablero funciona en local sin enviar
-datos a ningún servidor.
+ 
